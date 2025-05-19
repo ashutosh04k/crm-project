@@ -33,7 +33,7 @@ import AdminLeads from "./AdminLeads";
 import TeamLeadLeads from "./TeamLeads";
 import UserLeads from "./UserLeads";
 
-type Role = "SuperAdmin" | "CRMAdministrator" | "Admin" | "TeamLead" | "User" | undefined;
+type Role = "SuperAdmin" | "CRMAdministrator" | "Admin" | "TeamLead" | "Executive" | undefined;
 
 const selectAuth = (state: { auth?: { user?: { role: Role } } }) => state.auth;
 const selectUserRole = createSelector([selectAuth], (auth) => auth?.user?.role);
@@ -43,7 +43,7 @@ const roleToComponent: Partial<Record<Exclude<Role, undefined>, React.ComponentT
   CRMAdministrator: SuperAdminLeads,
   Admin: AdminLeads,
   TeamLead: TeamLeadLeads,
-  User: UserLeads,
+  Executive: UserLeads,
 };
 
 const Leads = () => {

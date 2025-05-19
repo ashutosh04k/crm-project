@@ -34,7 +34,6 @@ const SuperAdminLeads: React.FC = () => {
   };
 
 
-  console.log(filterLeads,"file")
   const items: TabsProps['items'] = [
     { key: '1', label: 'All Leads', children: <LeadTable leads={filterLeads('Allleads')} filter="Allleads" /> },
     { key: '2', label: 'New Leads', children: <LeadTable leads={filterLeads('New')} filter="New" /> },

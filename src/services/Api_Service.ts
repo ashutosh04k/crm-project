@@ -1,7 +1,6 @@
 import axios from "axios";
 import { BACKEND_API_PATHS } from "../helpers/constants/backendApiPath.constant";
 import { API_BACKEND_PATH } from "../config/env";
-// const UserId = useSelector((state: any) => state.auth?.user?.role);
 
 export const GetAllUser = async() =>{
     try {

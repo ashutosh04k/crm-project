@@ -83,7 +83,6 @@ const AdminLeads: React.FC = () => {
           ...lead,
           key: lead._id || index,
         }));
-        console.log(leads,"leads")
         setAllLeads(leads);
       } catch (error) {
         console.error("Failed to fetch leads:", error);

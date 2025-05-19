@@ -2,7 +2,6 @@ import { RootState } from '../../store/store';
 import { useSelector } from 'react-redux';
 import React from 'react';
 
-// 1. Define all roles
 export enum RoleList {
   CRM_ADMINISTRATOR = "CRMAdministrator",
   SUPER_ADMIN = "SuperAdmin",
@@ -11,25 +10,21 @@ export enum RoleList {
   EXECUTIVE = "Executive",
 }
 
-// 2. Define all features
 export enum FeatureList {
-  DELETE_LEAD = 'DELETE_LEAD',
-  VIEW_REPORT = 'VIEW_REPORT',
   ADMIN_AUTH = 'ADMIN_AUTH',
+  TEAMLEAD_AUTH = 'TEAMLEAD_AUTH',
   EDIT_USER = 'EDIT_USER',
   ASSIGN_TASK = 'ASSIGN_TASK',
   CRM_ADMIN = 'CRM_ADMIN',
   ADMIN= 'ADMIN'
 }
 
-// 3. Map features to roles
 export const featureToRoleMap: Record<FeatureList, RoleList[]> = {
+  [FeatureList.TEAMLEAD_AUTH] : [RoleList.CRM_ADMINISTRATOR,RoleList.SUPER_ADMIN,RoleList.ADMIN,RoleList.TEAM_LEADER],
+  [FeatureList.ADMIN_AUTH] : [RoleList.CRM_ADMINISTRATOR,RoleList.SUPER_ADMIN,RoleList.ADMIN],
+  [FeatureList.EDIT_USER]: [RoleList.CRM_ADMINISTRATOR,RoleList.SUPER_ADMIN],
   [FeatureList.CRM_ADMIN]: [RoleList.CRM_ADMINISTRATOR],
-  [FeatureList.ADMIN_AUTH] : [RoleList.CRM_ADMINISTRATOR,RoleList.ADMIN,RoleList.SUPER_ADMIN],
-  [FeatureList.DELETE_LEAD]: [RoleList.SUPER_ADMIN, RoleList.ADMIN],
-  [FeatureList.VIEW_REPORT]: [RoleList.SUPER_ADMIN, RoleList.ADMIN, RoleList.TEAM_LEADER],
   [FeatureList.ADMIN] : [RoleList.ADMIN],
-  [FeatureList.EDIT_USER]: [RoleList.SUPER_ADMIN],
   [FeatureList.ASSIGN_TASK]: [RoleList.SUPER_ADMIN, RoleList.TEAM_LEADER],
 };
 

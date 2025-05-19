@@ -12,7 +12,7 @@ interface ProfileProps {
   managerId?: number;
 }
 
-const General: React.FC<ProfileProps> = ({ name, email, role, phone, avatarUrl, bio ,managerId }) => {
+const General: React.FC<ProfileProps> = ({ name, email, role, phone, avatarUrl, bio, managerId }) => {
   return (
     <Card>
       <Row align="middle" gutter={24}>
@@ -20,42 +20,38 @@ const General: React.FC<ProfileProps> = ({ name, email, role, phone, avatarUrl, 
           <Avatar size={100} src={avatarUrl} icon={<UserOutlined />} />
         </Col>
         <Col flex="auto">
-          <Row gutter={[16, 16]}>
-            <Col span={8}>
-              <Input
-                addonBefore="Name"
-                value={name}
-                readOnly
-                size='large'
-              />
-            </Col>
-            <Col span={8}>
-              <Input
-                addonBefore="Email"
-                prefix={<MailOutlined />}
-                value={email}
-                size='large'
-                readOnly
-              />
-            </Col>
-            <Col span={8}>
-              <Input
-                addonBefore="Phone"
-                prefix={<PhoneOutlined />}
-                value={phone}
-                size='large'
-                readOnly
-              />
-            </Col>
-            <Col span={8}>
-              <Input
-                addonBefore="Role"
-                value={role}
-                size='large'
-                readOnly
-              />
-            </Col>
-          </Row>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <Input
+              addonBefore="Name"
+              value={name}
+              readOnly
+              size="large"
+            />
+            <Input
+              addonBefore="Email"
+              prefix={<MailOutlined />}
+              value={email}
+              size="large"
+              readOnly
+            />
+           
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            
+            <Input
+              addonBefore="Phone"
+              prefix={<PhoneOutlined />}
+              value={phone}
+              size="large"
+              readOnly
+            />
+            <Input
+              addonBefore="Role"
+              value={role}
+              size="large"
+              readOnly
+            />
+          </div>
         </Col>
       </Row>
       <Divider />

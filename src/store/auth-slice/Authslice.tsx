@@ -37,7 +37,6 @@ export const loginUser = createAsyncThunk(
       formData,
       { withCredentials: true }
     );
-    console.log(response?.data)
     return response?.data;
   }
 );
@@ -77,7 +76,6 @@ const Authslice = createSlice({
         state.error = null; // Reset error state when starting login
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action,"login actionS")
         state.isloading = false;
         state.user = action.payload.data;
         state.isAuthenticated = true;
@@ -92,7 +90,6 @@ const Authslice = createSlice({
         state.isloading = true;
       })
       .addCase(checkAuth.fulfilled,(state,action) =>{
-        console.log(action,"action")
         state.isloading = false;
         state.user = action.payload.status === 200 ? action.payload.data : null;
         state.isAuthenticated = true;
