@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 const { Title } = Typography;
 
-interface DataType {
+interface TeamLeadType {
   key: string;
   id: string;
   name: string;
@@ -26,12 +26,12 @@ interface ExecutiveType {
 }
 
 const AdminTeams = () => {
-  const [teamLeads, setTeamLeads] = useState<DataType[]>([]);
+  const [teamLeads, setTeamLeads] = useState<TeamLeadType[]>([]);
   const [executives, setExecutives] = useState<ExecutiveType[]>([]);
   const [selectedTeamLeadName, setSelectedTeamLeadName] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleNameClick = async (record: DataType) => {
+  const handleNameClick = async (record: TeamLeadType) => {
     try {
       const response = await FetchAllExecutiveByManagerId(record.id);
       const formatted = response.map((item: any, index: number) => ({
@@ -46,7 +46,7 @@ const AdminTeams = () => {
     }
   };
 
-  const teamLeadColumns: TableProps<DataType>['columns'] = [
+  const teamLeadColumns: TableProps<TeamLeadType>['columns'] = [
     {
       title: 'Name',
       dataIndex: 'name',
@@ -123,7 +123,7 @@ const AdminTeams = () => {
       <Row gutter={[16, 24]} style={{ margin: '0 auto', minHeight: '100vh' }}>
         <Col span={24}>
           <Title level={3}>Team Leads</Title>
-          <Table<DataType> columns={teamLeadColumns} dataSource={teamLeads} />
+          <Table<TeamLeadType> columns={teamLeadColumns} dataSource={teamLeads} />
         </Col>
       </Row>
 
@@ -138,6 +138,7 @@ const AdminTeams = () => {
           columns={executiveColumns}
           dataSource={executives}
           pagination={{ pageSize: 5 }}
+          rowKey="id"
         />
       </Modal>
     </>
