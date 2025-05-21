@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Modal, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Form, Input, Layout, message, Modal, Select, Space, Table } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { FeatureList, isFeatureAllowed } from '../../../helpers/utils/App.FeatureAuth';
-import { FetchUserById } from '../../../services/Api_Service';
+import { FetchAllAdmin, FetchAllExecutiveByManagerId, FetchAllTeamLead, LeadAssign } from '../../../services/Api_Service';
+import useSelection from 'antd/es/table/hooks/useSelection';
+import { useSelector } from 'react-redux';
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
 interface DataType {
   key: React.Key;
+  id: string;
   clientName: string;
   clientPhone: string;
   projectInterested: string;
@@ -16,13 +19,14 @@ interface DataType {
   createdAt: string;
   leadStatus: string;
   assignedBy: string;
-  assignedTo : string;
+  assignedTo: string;
   assignedByName?: string; // Add a new field for the user name
 }
 
 interface LeadTableProps {
   leads: DataType[];
   filter: string;
+  CurrentRole: "SuperAdmin" | "Admin" | "TeamLead" | "Executive";
 }
 
 function formatReadableDate(isoString: any) {
@@ -31,17 +35,27 @@ function formatReadableDate(isoString: any) {
   return isNaN(date.getTime())
     ? '-'
     : date.toLocaleString(undefined, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      });
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
 }
 
-const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
+const LeadTable: React.FC<LeadTableProps> = ({ leads, filter, CurrentRole }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedLead, setSelectedLead] = useState<DataType | null>(null);
+  const [assignableUsers, setAssignableUsers] = useState<{ id: string; name: string }[]>([]);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { Option } = Select;
+  const { id } = useSelector((state: any) => state.auth?.user);
+  const [form] = Form.useForm();
+
+  
+
   // const [processedLeads, setProcessedLeads] = useState<DataType[]>([]);
 
   // useEffect(() => {
@@ -51,7 +65,7 @@ const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
   //         try {
   //           // const assignedByUser = await FetchUserById(lead.assignedBy);
   //           // const assignedToUser = await FetchUserById(lead.assignedTo);
-  
+
   //           return {
   //             ...lead,
   //             // assignedByName: assignedByUser?.data?.name || 'Unknown',
@@ -69,10 +83,11 @@ const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
   //     );
   //     setProcessedLeads(updatedLeads);
   //   };
-  
+
   //   fetchAssignedNames();
   // }, [leads]);
-  console.log(leads,"from table")
+
+
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Client Name',
@@ -86,14 +101,14 @@ const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
       title: 'Project Interested In',
       dataIndex: 'projectInterested',
     },
-    {
-      title: 'Priority',
-      dataIndex: 'leadPriority',
-    },
-    {
-      title: 'Lead Source',
-      dataIndex: 'leadSource',
-    },
+    // {
+    //   title: 'Priority',
+    //   dataIndex: 'leadPriority',
+    // },
+    // {
+    //   title: 'Lead Source',
+    //   dataIndex: 'leadSource',
+    // },
     {
       title: 'Date',
       dataIndex: 'createdAt',
@@ -108,17 +123,20 @@ const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
       dataIndex: "assignedToName",
     },
     {
-      title:'Status',
-      dataIndex :"leadStatus",
+      title: 'Status',
+      dataIndex: "leadStatus",
     },
-    ...(isFeatureAllowed(FeatureList.ADMIN_AUTH)
+    ...(isFeatureAllowed(FeatureList.TEAMLEAD_AUTH)
       ? [
-          {
-            title: 'Action',
-            dataIndex: 'Action',
-            render: () => <Button onClick={showModal}>Assign</Button>,
-          },
-        ]
+        {
+          title: 'Action',
+          dataIndex: 'Action',
+          render: (_: any, record: DataType) => (
+            <Button onClick={() => showModal(record)}>Assign</Button>
+          ),
+        },
+
+      ]
       : []),
   ];
 
@@ -150,10 +168,10 @@ const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
     ],
   };
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const showModal = () => {
+  const showModal = (lead: DataType) => {
     setIsModalVisible(true);
+    setSelectedLead(lead);
   };
 
   const handleOk = () => {
@@ -164,6 +182,74 @@ const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
     setIsModalVisible(false);
   };
 
+const handleAssign = async () => {
+  try {
+    const values = await form.validateFields();
+
+    const leadId = selectedLead?.id?.toString(); 
+    const assignedToId = values.assignedTo; // the selected user from dropdown
+    if (!leadId || !assignedToId) {
+      console.error("Missing lead ID or assigned user ID");
+      return;
+    }
+
+    const payload = {
+      leadIds: [leadId],
+    };
+
+
+    const result = await LeadAssign(assignedToId, payload);
+
+    setIsModalVisible(false);
+    message.success("Lead assigned successfully!");
+    // Optional: refresh leads or update state
+  } catch (err) {
+    console.error("Assignment failed:", err);
+    message.error("Lead assignment failed.");
+  }
+};
+
+
+
+  useEffect(() => {
+    if (selectedLead) {
+      form.setFieldsValue({
+        clientName: selectedLead.clientName,
+        clientPhone: selectedLead.clientPhone,
+        projectInterested: selectedLead.projectInterested,
+        leadPriority: selectedLead.leadPriority,
+        leadSource: selectedLead.leadSource,
+        leadStatus: selectedLead.leadStatus,
+        assignedByName: selectedLead.assignedByName,
+        // assignedToName: selectedLead.assignedToName,
+        createdAt: formatReadableDate(selectedLead.createdAt),
+      });
+    }
+  }, [selectedLead, form]);
+
+  useEffect(() => {
+    const fetchAssignableUsers = async () => {
+      try {
+        let users = [];
+
+        if (CurrentRole === 'SuperAdmin') {
+          users = await FetchAllAdmin(); // You need to define this
+        } else if (CurrentRole === 'Admin') {
+          users = await FetchAllTeamLead();
+        } else if (CurrentRole === 'TeamLead') {
+          users = await FetchAllExecutiveByManagerId(id); // You need to define this
+        }
+
+        if (users) setAssignableUsers(users);
+      } catch (error) {
+        console.error("Error fetching assignable users:", error);
+      }
+    };
+
+    fetchAssignableUsers();
+  }, [CurrentRole]);
+
+
   return (
     <>
       <Table<DataType>
@@ -171,11 +257,72 @@ const LeadTable: React.FC<LeadTableProps> = ({ leads, filter }) => {
         columns={columns}
         dataSource={leads} // Use the preprocessed leads
       />
-      <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+      <Modal
+        title={`Assign Lead`}
+        open={isModalVisible}
+        footer={(_,) => (
+          <>
+            <Button onClick={handleAssign}>Assign</Button>
+          </>
+        )}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form form={form} layout="horizontal">
+          <Form.Item name="clientName" label="Client Name">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item name="clientPhone" label="Client Phone">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item name="projectInterested" label="Project Interested">
+            <Input disabled />
+          </Form.Item>
+
+          {/* <Form.Item name="leadPriority" label="Lead Priority">
+      <Input disabled />
+    </Form.Item>
+
+    <Form.Item name="leadSource" label="Lead Source">
+      <Input disabled />
+    </Form.Item>
+
+    <Form.Item name="leadStatus" label="Lead Status">
+      <Input disabled />
+    </Form.Item> */}
+
+          <Form.Item name="assignedByName" label="Assigned By">
+            <Input disabled />
+          </Form.Item>
+
+          {/* <Form.Item name="assignedToName" label="Assigned To">
+      <Input />
+    </Form.Item> */}
+          <Form.Item name="assignedTo" label="Assigned To">
+            <Select
+              placeholder={`Select ${CurrentRole === 'SuperAdmin' ? 'Admin' : CurrentRole === 'Admin' ? 'team lead' : 'executive'}`}
+              onChange={(value, option) => {
+                form.setFieldsValue({ assignedToName: option?.children });
+              }}
+            >
+              {assignableUsers.map((user) => (
+                <Select.Option key={user.id} value={user.id}>
+                  {user.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+
+          <Form.Item name="createdAt" label="Created At">
+            <Input disabled />
+          </Form.Item>
+        </Form>
       </Modal>
+
+
     </>
   );
 };

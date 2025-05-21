@@ -29,12 +29,8 @@ const SuperAdminDashboard = () => {
     setLoading(true);
     try {
     const response = await CreateLead(NewLeadFormData);
-    console.log(response,"newlead")
-    console.log("Form Submitted:", NewLeadFormData);
-
     message.success("Lead Added Successfully");
     setNewLeadFormData(intialCreateLeadFormData);
-    console.log(response)
     } catch (error) {
       message.error("Something went wrong. while creating new lead");
     } finally{
@@ -47,7 +43,6 @@ const SuperAdminDashboard = () => {
   };
   
   const handleNewLeadCancel = () => {
-    console.log('Clicked cancel button');
     setNewLeadOpen(false);
   };
   const showExcellUploadModal = () =>{
@@ -61,7 +56,6 @@ const SuperAdminDashboard = () => {
   };
   
   const handleExcellUploadCancel = () => {
-    console.log('Clicked cancel button');
     setNewUserOpen(false);
   };
   const cardDetails = [

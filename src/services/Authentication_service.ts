@@ -14,12 +14,6 @@ export const SignIn_Service = async (email: string, password: string) => {
             withCredentials:true,
          }
       );
-      // console.log(response)
-      // localStorage.setItem('Name', `${response?.data?.data?.name}`)
-      // localStorage.setItem('Role', `${response?.data?.data?.role}`)
-      // localStorage.setItem('Email', `${response?.data?.data?.email}`)
-      // localStorage.setItem('Id',`${response?.data?.data?.id}`)
-      // console.log(response, "logedin")
       return response?.data;
    } catch (error) {
       console.error("Error while SignIn :-", error)

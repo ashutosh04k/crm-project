@@ -26,10 +26,7 @@ const CreateUser = () => {
         setLoading(false);
         return;
       }
-
       const response = await CreateCRMUser(formData);
-      console.log(response)
-      console.log("Form Submitted:", formData);
       message.success("User created successfully!");
       setFormData(initialCreateuserFormData);
     } catch (err) {

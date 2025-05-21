@@ -54,7 +54,6 @@ const TeamLeadTeams = () => {
     const fetchTeamLeads = async () => {
       try {
         const response = await FetchAllExecutiveByManagerId(UserId);
-        console.log(response,"teamleads")
         setTeamsLeads(response)
       } catch (error) {
         console.error("Failed to fetch users:", error);

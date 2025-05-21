@@ -7,5 +7,8 @@ export const BACKEND_API_PATHS = {
    LEADS : "leads",
    VERIFYTOKEN :'verifytoken',
    TEAMLEAD : 'teamleads',
+   LEADSTEAM : 'teamlead',
    EXECUTIVESINTEAM :  'executivesinteam',
+   ADMINS : 'admins',
+   LEADSASSIGN :'leadsassign',
 };
