@@ -1,8 +1,10 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Col, Row, message } from "antd";
 import CommonForm from "../../../helpers/utils/CommonForm";
-import { CreateCRMUser} from "../../../services/Api_Service";
+import { CreateCRMUser } from "../../../services/Api_Service";
 import { CreateUserControl } from "../../../config";
+import { useTeamLeads } from "../../hooks/useTeamLead";
+import { useAdmins } from "../../hooks/useAdmin";
 
 const initialCreateuserFormData = {
   name: "",
@@ -12,48 +14,62 @@ const initialCreateuserFormData = {
   role: "",
   teamLead: "",
   admin: "",
+  managerId:"",
 };
-const CreateUser = () => {
 
+const CreateUser = () => {
   const [formData, setFormData] = useState<Record<string, string | boolean>>(initialCreateuserFormData);
   const [loading, setLoading] = useState(false);
+  const teamLeads = useTeamLeads();
+  const Admins = useAdmins();
 
-  const handleuserCreated = async (formData:any) => {
-    setLoading(true);
-    try {
-      if (!/^\d{10}$/.test(formData.phone as string)) {
-        message.error("Phone number must be exactly 10 digits.");
-        setLoading(false);
-        return;
-      }
-      const response = await CreateCRMUser(formData);
-      message.success("User created successfully!");
-      setFormData(initialCreateuserFormData);
-    } catch (err) {
-      message.error("Something went wrong.");
-    } finally {
+
+  const handleuserCreated = async (formData: any) => {
+  setLoading(true);
+  try {
+    if (!/^\d{10}$/.test(formData.phone as string)) {
+      message.error("Phone number must be exactly 10 digits.");
       setLoading(false);
+      return;
     }
-  };
 
+    // Set managerId based on role
+    let managerId = "";
+    if (formData.role === "Executive") {
+      managerId = formData.teamLead; // This should be the selected teamLead's id
+    } else if (formData.role === "TeamLead") {
+      managerId = formData.admin; // This should be the selected admin's id
+    }
+
+    const submitData = { ...formData, managerId };
+
+    const response = await CreateCRMUser(submitData);
+    message.success("User created successfully!");
+    setFormData(initialCreateuserFormData);
+  } catch (err) {
+    message.error("Something went wrong.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getDynamicFormControls = () => {
   return CreateUserControl.map((control) => {
-    // Show "Team Lead" only if role is Executive
-    if (control.name === "teamLead") {
+
+    if (control.name === "Admin") {
       return {
         ...control,
-        hidden: formData.role !== "Executive",
-        required: formData.role === "Executive",
+        options: Admins,
+        hidden: formData.role !== "TeamLead",
+        // required: formData.role === "TeamLead",
       };
     }
-
-    // Show "Admin" only if role is TeamLead
-    if (control.name === "admin") {
+    if (control.name === "TeamLead") {
       return {
         ...control,
-        hidden: formData.role !== "TeamLead",
-        required: formData.role === "TeamLead",
+        options: teamLeads,
+        hidden: formData.role !== "Executive",
+        // required: formData.role === "Executive",
       };
     }
 
@@ -61,20 +77,21 @@ const CreateUser = () => {
   });
 };
 
+
   return (
     <>
-    <Row gutter={[14, 14]}>
-      <Col span={20}>
-        <CommonForm
-          formControls={getDynamicFormControls()}
-          formData={formData}
-          setFormData={setFormData}
-          onSubmit={handleuserCreated}
-          buttonText={loading ? "User Creating..." : "Create User"}
-          isBtnDisabled={loading}
+      <Row gutter={[16, 16]} style={{ margin: '0 auto', maxWidth: '100%', overflowX: 'hidden' }}>
+        <Col span={24} style={{ overflowX: 'auto' }}>
+          <CommonForm
+            formControls={getDynamicFormControls()}
+            formData={formData}
+            setFormData={setFormData}
+            onSubmit={handleuserCreated}
+            buttonText={loading ? "User Creating..." : "Create User"}
+            isBtnDisabled={loading}
           />
-      </Col>
-    </Row>
+        </Col>
+      </Row>
     </>
   );
 };
