@@ -16,7 +16,6 @@ const UserLeads: React.FC = () => {
       try {
         setLoading(true);
         const response = await FetchLeadById(UserId);
-        console.log(response,"userleads")
         const leads = (response?.data || []).map((lead: any, index: number) => ({
           ...lead,
           key: lead._id || index,

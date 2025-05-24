@@ -59,7 +59,6 @@ const SuperAdminDashboard = () => {
   const showExcellUploadModal = () =>{
     setNewLeadFromExcell(true);
   }
-console.log(NewLeadFormData,"djf")
   const handleExcellUploadOk = () => {
     setTimeout(() => {
       setNewLeadFromExcell(false);

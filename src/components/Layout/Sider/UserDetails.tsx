@@ -28,7 +28,6 @@ const UserDetails: React.FC = () => {
     })
     }
   const changeRole: MenuProps['onClick'] = (e) => {
-    console.log(e,"e")
     if (e.key === "LogOut") {
         
       handleLogOut();
@@ -50,7 +49,6 @@ const UserDetails: React.FC = () => {
             email:localStorage.getItem("Email") || "anar",
           },
         }));
-        console.log(`Role changed to: ${roleObj.role}`);
       }
     }
   };

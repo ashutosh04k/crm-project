@@ -23,7 +23,6 @@ const Users = () => {
   const [users,setUsers] = useState([]);
 
   const handleDeleteUser = async(Record:any) =>{
-    console.log(Record,"red")
     try {
       const response = await DeleteUser(Record?.id);
       message.success("User Deleted Successfully ");      

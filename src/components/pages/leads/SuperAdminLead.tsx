@@ -16,7 +16,6 @@ const SuperAdminLeads: React.FC = () => {
       try {
         setLoading(true);
         const response = await GetAllLead();
-        console.log(response,"admin response")
         // const leads = (response?.data || []).map((lead: any, index: number) => ({
         //   ...lead,
         //   key: lead._id || index,
@@ -38,7 +37,6 @@ const SuperAdminLeads: React.FC = () => {
     return allLeads?.data.filter((lead:any) => lead.leadStatus === status);
   };
 
-  console.log(allLeads,"allleads  ")
   const items: TabsProps['items'] = [
     { key: '1', label: 'All Leads', children: <LeadTable leads={filterLeads('Allleads')} filter="Allleads" CurrentRole={role} /> },
     { key: '2', label: 'New Leads', children: <LeadTable leads={filterLeads('New')} filter="New" CurrentRole={role} /> },
