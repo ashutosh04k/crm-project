@@ -27,6 +27,7 @@ const footerStyle: React.CSSProperties = {
   textAlign: 'center',
   color: '#000',
   backgroundColor: '#ffffff',
+  bottom:0
 };
 
 const layoutStyle = {
@@ -54,7 +55,7 @@ export const MainLayout: React.FC = () => {
       >
         <CustomSider onSelectKey={handleSelectKey} />
       </Sider>
-      <Layout>
+      <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         {/* <Header style={headerStyle} className='rounded-lg'><HeaderComp/></Header> */}
         <Content style={contentStyle}>
         <Header style={headerStyle} className='rounded-lg'>

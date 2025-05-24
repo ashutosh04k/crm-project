@@ -1,20 +1,44 @@
-import { Button, Card, Col, Divider, Input, Modal, Row } from 'antd';
+import { Button, Card, Col, Divider, Input, message, Modal, Row } from 'antd';
 import { AlertTriangle, PhoneCall } from 'lucide-react';
 import { useState } from 'react';
 import { CalendarOutlined ,DownloadOutlined,PlusOutlined } from '@ant-design/icons'; 
 const AdminDashboard = () => {
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState('');
 
   const showModal = () => {
     setOpen(true);
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers
+    if (/^\d*$/.test(value)) {
+      setPhone(value);
+      // Validation: must be exactly 10 digits
+      if (value.length === 10) {
+        setPhoneError('');
+      } else {
+        setPhoneError('Phone number must be exactly 10 digits');
+      }
+    }
+  };
+
   const handleOk = () => {
+    // Validate before submitting
+    if (phone.length !== 10) {
+      setPhoneError('Phone number must be exactly 10 digits');
+      message.error('Please enter a valid 10-digit phone number');
+      return;
+    }
     setConfirmLoading(true);
     setTimeout(() => {
       setOpen(false);
       setConfirmLoading(false);
+      setPhone('');
+      setPhoneError('');
     }, 2000);
   };
 
@@ -254,11 +278,17 @@ const AdminDashboard = () => {
         style={{marginBottom:'10px'}}
         />
         <Input
-        type='text'
-        placeholder='Phone No'
-        required
-        style={{marginBottom:'10px'}} 
+          type='text'
+          placeholder='Phone No'
+          required
+          style={{ marginBottom: '10px' }}
+          value={phone}
+          maxLength={10}
+          onChange={handlePhoneChange}
         />
+        {phoneError && (
+          <div style={{ color: 'red', marginBottom: 10 }}>{phoneError}</div>
+        )}
         <Input
         type='text'
         placeholder='Budget Range'

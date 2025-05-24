@@ -1,7 +1,7 @@
 import { Button, Card, Col, Divider, Input, message, Modal, Row, Select } from 'antd';
 import { AlertTriangle, Divide, PhoneCall } from 'lucide-react';
 import { useState } from 'react';
-import { CalendarOutlined ,DownloadOutlined,PlusOutlined } from '@ant-design/icons'; 
+import { CalendarOutlined ,DownloadOutlined,PlusOutlined, UploadOutlined } from '@ant-design/icons'; 
 import CommonForm from '../../../helpers/utils/CommonForm';
 import { CreateLeadControl } from '../../../config';
 import { CreateLead } from '../../../services/Api_Service';
@@ -17,8 +17,14 @@ const SuperAdminDashboard = () => {
   const [NewLeadopen, setNewLeadOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [NewLeadFormData, setNewLeadFormData] = useState<Record<string, string | boolean>>(intialCreateLeadFormData);
-  const [NewUserOpen, setNewUserOpen] = useState(false);
+  const [NewLeadFromExcell, setNewLeadFromExcell] = useState(false);
 
+
+  const [excelFile, setExcelFile] = useState(null);
+
+  const handleFileChange = (e:any) => {
+    setExcelFile(e.target.files[0]);
+  };
   const showNewLeadModal = () => {
     setNewLeadOpen(true);
   };
@@ -28,6 +34,11 @@ const SuperAdminDashboard = () => {
     // setConfirmLoading(true);
     setLoading(true);
     try {
+      if (!/^\d{10}$/.test(NewLeadFormData.clientPhone as string)) {
+      message.error("Phone number must be exactly 10 digits and numeric.");
+      setLoading(false);
+      return;
+    }
     const response = await CreateLead(NewLeadFormData);
     message.success("Lead Added Successfully");
     setNewLeadFormData(intialCreateLeadFormData);
@@ -46,17 +57,17 @@ const SuperAdminDashboard = () => {
     setNewLeadOpen(false);
   };
   const showExcellUploadModal = () =>{
-    setNewUserOpen(true);
+    setNewLeadFromExcell(true);
   }
-
+console.log(NewLeadFormData,"djf")
   const handleExcellUploadOk = () => {
     setTimeout(() => {
-      setNewUserOpen(false);
+      setNewLeadFromExcell(false);
     }, 2000);
   };
   
   const handleExcellUploadCancel = () => {
-    setNewUserOpen(false);
+    setNewLeadFromExcell(false);
   };
   const cardDetails = [
     {
@@ -173,7 +184,59 @@ const SuperAdminDashboard = () => {
           </Col>
         ))}
       </Row>
-      <Row gutter={[24,24]} className="mt-6">
+      
+      <Modal
+        title="Add New Lead"
+        open={NewLeadopen}
+        okText="Add New Lead"
+        // onOk={handleNewLeadOk}
+        width={375}
+        // confirmLoading={confirmLoading}
+        onCancel={handleNewLeadCancel}
+        footer={null}
+        closeIcon={null}
+        className='justify-between'
+      >
+        <CommonForm 
+        formControls={CreateLeadControl}
+        formData={NewLeadFormData}
+        setFormData={setNewLeadFormData}
+        onSubmit={handleNewLeadOk}
+        buttonText={loading ? "Adding New Lead..." : "Add New Lead"}
+        isBtnDisabled={loading}
+        />
+      </Modal>
+      <Modal
+        title="Upload Lead Using Excell"
+        open={NewLeadFromExcell}
+        okText="Create User"
+        onOk={handleExcellUploadOk}
+        width={416}
+        onCancel={handleExcellUploadCancel}
+        className='justify-between'
+      >
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '10px' }}>
+          <UploadOutlined style={{ fontSize: '16px' }} />
+          <span>Choose Excel File</span>
+          <input
+            type="file"
+            accept=".xls,.xlsx"
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+        </label>
+
+      </Modal>
+    </div>
+    
+  )
+}
+
+export default SuperAdminDashboard;
+
+
+
+{/* <Row gutter={[24,24]} className="mt-6">
         <Col span={12}>
         <Card title="Leads Overview" className="bg-white shadow-md rounded-lg p-4 mt-4">
           
@@ -239,7 +302,6 @@ const SuperAdminDashboard = () => {
                       <PhoneCall size={24} />
                     </div>
                     <div className="text-2xl font-bold text-green-600">
-                      {/* {Math.round(stats.todayCalls * 0.7)} */}
                     </div>
                     <div className="text-sm text-green-700">Connected</div>
                   </div>
@@ -253,7 +315,6 @@ const SuperAdminDashboard = () => {
                       <AlertTriangle size={24} />
                     </div>
                     <div className="text-2xl font-bold text-red-600">
-                      {/* {Math.round(stats.todayCalls * 0.2)} */}
                     </div>
                     <div className="text-sm text-red-700">Disconnected</div>
                   </div>
@@ -267,7 +328,6 @@ const SuperAdminDashboard = () => {
                       <PhoneCall size={24} className="opacity-50" />
                     </div>
                     <div className="text-2xl font-bold text-gray-600">
-                      {/* {Math.round(stats.todayCalls * 0.1)} */}
                     </div>
                     <div className="text-sm text-gray-700">Switched Off</div>
                   </div>
@@ -284,61 +344,4 @@ const SuperAdminDashboard = () => {
         </Card>
         </Col>
 
-      </Row>
-      <Modal
-        title="Add New Lead"
-        open={NewLeadopen}
-        okText="Add New Lead"
-        // onOk={handleNewLeadOk}
-        width={375}
-        // confirmLoading={confirmLoading}
-        onCancel={handleNewLeadCancel}
-        footer={null}
-        closeIcon={null}
-        className='justify-between'
-      >
-        <CommonForm 
-        formControls={CreateLeadControl}
-        formData={NewLeadFormData}
-        setFormData={setNewLeadFormData}
-        onSubmit={handleNewLeadOk}
-        buttonText={loading ? "Adding New Lead..." : "Add New Lead"}
-        isBtnDisabled={loading}
-        />
-      </Modal>
-      <Modal
-        title="Add New User"
-        open={NewUserOpen}
-        okText="Create User"
-        onOk={handleExcellUploadOk}
-        width={416}
-        onCancel={handleExcellUploadCancel}
-        className='justify-between'
-      >
-        <Input
-        type='text'
-        placeholder='Name'
-        required
-        style={{marginBottom:'10px'}}
-        />
-        <Input
-        type='text'
-        placeholder='Phone Number'
-        required
-        style={{marginBottom:'10px'}}
-
-        />
-        <Input
-        type='text'
-        placeholder='Role'
-        required
-        style={{marginBottom:'10px'}}
-
-        />
-      </Modal>
-    </div>
-    
-  )
-}
-
-export default SuperAdminDashboard
+      </Row> */}

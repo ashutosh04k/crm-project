@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { Row, Tabs, Col, Spin } from 'antd';
-import type { TabsProps } from 'antd';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Row, Tabs, Col, Spin, message } from 'antd';
+import { TabsProps } from 'antd';
 import LeadTable from './LeadTable';
 import { GetAllLead } from '../../../services/Api_Service';
 import { useSelector } from 'react-redux';
 
 const SuperAdminLeads: React.FC = () => {
-  const [allLeads, setAllLeads] = useState<any[]>([]);
+  const [allLeads, setAllLeads] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const {id,role} = useSelector((state: any) => state.auth?.user);
+  const { id, role } = useSelector((state: any) => state.auth?.user || {});
+  const [activeKey, setActiveKey] = useState("1");
 
   useEffect(() => {
     const fetchAllLeads = async () => {
       try {
         setLoading(true);
         const response = await GetAllLead();
-        const leads = (response?.data || []).map((lead: any, index: number) => ({
-          ...lead,
-          key: lead._id || index,
-        }));
-        setAllLeads(leads);
+        console.log(response,"admin response")
+        // const leads = (response?.data || []).map((lead: any, index: number) => ({
+        //   ...lead,
+        //   key: lead._id || index,
+        // }));
+        setAllLeads(response);
       } catch (error) {
         console.error("Failed to fetch leads:", error);
+        message.error("Failed to fetch leads. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -31,11 +34,11 @@ const SuperAdminLeads: React.FC = () => {
   }, []);
 
   const filterLeads = (status: string) => {
-    if (status === 'Allleads') return allLeads;
-    return allLeads.filter((lead) => lead.leadStatus === status);
+    if (status === 'Allleads') return allLeads?.data;
+    return allLeads?.data.filter((lead:any) => lead.leadStatus === status);
   };
 
-
+  console.log(allLeads,"allleads  ")
   const items: TabsProps['items'] = [
     { key: '1', label: 'All Leads', children: <LeadTable leads={filterLeads('Allleads')} filter="Allleads" CurrentRole={role} /> },
     { key: '2', label: 'New Leads', children: <LeadTable leads={filterLeads('New')} filter="New" CurrentRole={role} /> },
@@ -45,16 +48,21 @@ const SuperAdminLeads: React.FC = () => {
     { key: '6', label: 'Past Leads', children: <LeadTable leads={filterLeads('Closed')} filter="Closed" CurrentRole={role} /> },
   ];
 
+  const handleTabChange = (key: string) => {
+    setActiveKey(key);
+  };
+
   return (
     <Row gutter={[16, 16]} style={{ margin: '0 auto' }}>
       <Col span={24}>
         {loading ? (
-          <Spin tip="Loading leads..." />
+          <Spin spinning={loading} tip="Loading leads..." />
         ) : (
           <Tabs
+            activeKey={activeKey}
+            onChange={handleTabChange}
             className="bg-white h-screen"
-            style={{ padding: '16px', borderRadius: '10px' }}
-            defaultActiveKey="1"
+            style={{ borderRadius: '10px', marginTop: '20px' }}
             items={items}
             size="large"
           />

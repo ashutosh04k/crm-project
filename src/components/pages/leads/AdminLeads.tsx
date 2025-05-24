@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Row, Tabs, Col, Spin } from 'antd';
 import type { TabsProps } from 'antd';
 import LeadTable from './LeadTable';
 import { FetchLeadById } from '../../../services/Api_Service';
 import { useSelector } from 'react-redux';
 
-const AdminLeads: React.FC = () => {
+const AdminLeads: React.FC = memo(() => {
   const [allLeads, setAllLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const {id,role} = useSelector((state: any) => state.auth?.user);
@@ -15,6 +15,7 @@ const AdminLeads: React.FC = () => {
       try {
         setLoading(true);
         const response = await FetchLeadById(id);
+        
         const leads = (response?.data || []).map((lead: any, index: number) => ({
           ...lead,
           key: lead._id || index,
@@ -45,10 +46,10 @@ const AdminLeads: React.FC = () => {
   ];
 
   return (
-    <Row gutter={[16, 16]} style={{ margin: '0 auto' }}>
+    <Row gutter={[16, 16]} style={{ margin: '0 auto'}}>
       <Col span={24}>
         {loading ? (
-          <Spin tip="Loading leads..." />
+          <Spin fullscreen={true} tip="Loading leads..." />
         ) : (
           <Tabs
             className="bg-white h-screen"
@@ -61,6 +62,6 @@ const AdminLeads: React.FC = () => {
       </Col>
     </Row>
   );
-};
+});
 
 export default AdminLeads;

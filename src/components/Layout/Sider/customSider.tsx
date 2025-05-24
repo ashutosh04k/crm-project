@@ -26,6 +26,10 @@ const featureBasedMenuItems = (): MenuItem[] => {
   if (isFeatureAllowed(FeatureList.TEAMLEAD_AUTH)) {
     items.push(
       { key: '/teams', icon: <UsergroupAddOutlined />, label: 'Team' },
+    );
+  }
+  if (isFeatureAllowed(FeatureList.SUPERADMIN_AUTH)) {
+    items.push(
       { key: '/users', icon: <UserOutlined />, label: 'Users' }
     );
   }

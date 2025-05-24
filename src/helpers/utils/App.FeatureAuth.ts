@@ -13,7 +13,7 @@ export enum RoleList {
 export enum FeatureList {
   ADMIN_AUTH = 'ADMIN_AUTH',
   TEAMLEAD_AUTH = 'TEAMLEAD_AUTH',
-  EDIT_USER = 'EDIT_USER',
+  SUPERADMIN_AUTH = 'SUPERADMIN_AUTH',
   ASSIGN_TASK = 'ASSIGN_TASK',
   CRM_ADMIN = 'CRM_ADMIN',
   ADMIN= 'ADMIN'
@@ -22,19 +22,17 @@ export enum FeatureList {
 export const featureToRoleMap: Record<FeatureList, RoleList[]> = {
   [FeatureList.TEAMLEAD_AUTH] : [RoleList.CRM_ADMINISTRATOR,RoleList.SUPER_ADMIN,RoleList.ADMIN,RoleList.TEAM_LEADER],
   [FeatureList.ADMIN_AUTH] : [RoleList.CRM_ADMINISTRATOR,RoleList.SUPER_ADMIN,RoleList.ADMIN],
-  [FeatureList.EDIT_USER]: [RoleList.CRM_ADMINISTRATOR,RoleList.SUPER_ADMIN],
+  [FeatureList.SUPERADMIN_AUTH]: [RoleList.CRM_ADMINISTRATOR,RoleList.SUPER_ADMIN],
   [FeatureList.CRM_ADMIN]: [RoleList.CRM_ADMINISTRATOR],
-  [FeatureList.ADMIN] : [RoleList.ADMIN],
+  [FeatureList.ADMIN] : [RoleList.CRM_ADMINISTRATOR,RoleList.ADMIN],
   [FeatureList.ASSIGN_TASK]: [RoleList.SUPER_ADMIN, RoleList.TEAM_LEADER],
 };
 
-// 4. Utility for use **outside** React (e.g., inside config arrays)
 export const isFeatureAllowed = (feature: FeatureList): boolean => {
   const currentRole = useSelector((state: RootState) => state.auth?.user?.role);
   return featureToRoleMap[feature]?.includes(currentRole as RoleList) ?? false;
 };
 
-// 5. Component for use **inside** React JSX
 interface FeatureAuthProps {
   feature: FeatureList;
   children: React.ReactNode;

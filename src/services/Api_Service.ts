@@ -133,6 +133,51 @@ export const LeadAssign = async(AssignToId:string,FormData:any) =>{
     })
     return response.data;
   } catch (error) {
+        console.error("Error in Assigning the Leads :- ", error); 
+
+  }
+}
+
+export const LeadStatusUpdate = async(LeadId:string,FormData:any,UserId?:string) =>{
+  try { 
+    const response = await axios.patch(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.LEADS}/${LeadId}`,{
+      UserId,
+      FormData
+    },{
+      withCredentials:true
+    })
+    return response.data;
     
+  } catch (error) {
+    console.error("Error in Updating the lead Status :- ", error); 
+
+  }
+}
+
+
+export const DeleteUser = async(UserId:any) =>{
+  try {
+    const response = await axios.delete(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.USERS}/${UserId}`,{
+      withCredentials:true
+    })
+    return response;
+  } catch (error) {
+    console.error("Error in Deleting the Users :- ", error); 
+  }
+}
+
+export const HandleExcellleadUpload = async(FormData:any) =>{
+  try {
+    const response = await axios.post(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.LEADS}/${BACKEND_API_PATHS.UPLOADSHEET}`,
+      FormData
+    ,{
+      headers:{
+        'Content-Type' : 'multipart/formdata',
+      }
+    },);
+    alert('File uploaded successfully');
+    return response;
+  } catch (error) {
+    console.error("Error in Uploading the sheet :- ", error); 
   }
 }

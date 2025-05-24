@@ -1,24 +1,22 @@
-// import { USER_ROLE_OPTIONS } from "../../../helpers/constants/userRoles.constant";
 import { USER_ROLE_OPTIONS } from "../helpers/constants/userRoles.constant";
-import { FetchAllTeamLead } from "../services/Api_Service";
 
 export const loginFormControls = [
-    {
-        name: "email",
-        label: "Email",
-        placeholder: "Enter your email",
-        type: "email",
-        componentType: "input" as const,
-        required: true,
-      },
-      {
-        name: "password",
-        label: "Password",
-        placeholder: "Enter your password",
-        type: "password",
-        componentType: "input" as const,
-        required: true,
-      },
+  {
+    name: "email",
+    label: "Email",
+    placeholder: "Enter your email",
+    type: "email",
+    componentType: "input" as const,
+    required: true,
+  },
+  {
+    name: "password",
+    label: "Password",
+    placeholder: "Enter your password",
+    type: "password",
+    componentType: "input" as const,
+    required: true,
+  },
 ]
 
 export const CreateUserControl = [
@@ -55,29 +53,33 @@ export const CreateUserControl = [
     required: true,
   },
   {
-    name : "role",
-    label : "Select Role",
-    placeholder :"Select the role",
-    componentType :"select" as const,
+    name: "role",
+    label: "Select Role",
+    placeholder: "Select the role",
+    componentType: "select" as const,
+    valueField: "label",
     type: "text",
     options: USER_ROLE_OPTIONS,
-    required:true,
+    required: true,
   },
   {
-    name : "TeamLead",
-    label : "Select Team Lead",
-    placeholder : "Select The Team Lead For the Executive",
-    componentType : "select" as const,
+    name: "TeamLead",
+    managerId:"managerid",
+    label: "Select Team Lead",
+    placeholder: "Select The Team Lead For the Executive",
+    componentType: "select" as const,
     type: "text",
-    options : USER_ROLE_OPTIONS,
+    valueField: "id",
+    options: [],
   },
   {
-    name : "Admin",
-    label : "Select Admin",
-    placeholder : "Select Admin For the Team Lead",
-    componentType : "select" as const,
+    name: "Admin",
+    label: "Select Admin",
+    placeholder: "Select Admin For the Team Lead",
+    componentType: "select" as const,
     type: "text",
-    options : USER_ROLE_OPTIONS,
+    valueField: "id",
+    options: [],
   }
 ];
 
@@ -97,6 +99,12 @@ export const CreateLeadControl = [
     componentType: "input" as const,
     type: "tel",
     required: true,
+    rules: [
+      {
+        pattern: /^\d{10}$/,
+        message: "Phone number must be exactly 10 digits and numeric",
+      },
+    ],
   },
   {
     name: "clientEmail",
@@ -113,5 +121,5 @@ export const CreateLeadControl = [
     componentType: "input" as const,
     // required: true,
   },
-  
+
 ]

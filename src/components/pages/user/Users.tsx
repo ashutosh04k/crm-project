@@ -1,7 +1,8 @@
-import { Col, Row, Table } from 'antd';
+import { Button, Col, message, Row, Table } from 'antd';
 import type { TableProps } from 'antd';
-import { GetAllUser } from '../../../services/Api_Service';
+import { DeleteUser, GetAllUser } from '../../../services/Api_Service';
 import { useEffect, useState } from 'react';
+import { DeleteOutlined } from '@ant-design/icons';
 
 
 interface DataType {
@@ -14,7 +15,24 @@ interface DataType {
 
 }
 
-const columns: TableProps<DataType>['columns'] = [
+
+
+
+const Users = () => {
+
+  const [users,setUsers] = useState([]);
+
+  const handleDeleteUser = async(Record:any) =>{
+    console.log(Record,"red")
+    try {
+      const response = await DeleteUser(Record?.id);
+      message.success("User Deleted Successfully ");      
+    } catch (error) {
+      message.error("Error in delting the user");
+    }
+  }
+
+  const columns: TableProps<DataType>['columns'] = [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -40,6 +58,13 @@ const columns: TableProps<DataType>['columns'] = [
     title:'Manager Name',
     dataIndex:'manager',
     key:'manager'
+  },
+  {
+    title:'Action',
+    dataIndex:"Action",
+    render: (_: any, record: DataType) => (
+                <Button onClick={() => handleDeleteUser(record)}><DeleteOutlined/></Button>
+              ),
   },
   // {
   //   title: 'Tags',
@@ -72,11 +97,6 @@ const columns: TableProps<DataType>['columns'] = [
   //   ),
   // },
 ];
-
-
-const Users = () => {
-
-  const [users,setUsers] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
