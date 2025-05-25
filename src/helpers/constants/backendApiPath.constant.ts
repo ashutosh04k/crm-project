@@ -12,4 +12,7 @@ export const BACKEND_API_PATHS = {
    ADMINS : 'admins',
    LEADSASSIGN :'leadsassign',
    UPLOADSHEET : 'uploadsheet',
+   REPORTS : 'reports',
+   EXECUTIVE : 'executive',
+   TEAM : 'team'
 };

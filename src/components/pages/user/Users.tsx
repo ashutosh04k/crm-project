@@ -3,6 +3,7 @@ import type { TableProps } from 'antd';
 import { DeleteUser, GetAllUser } from '../../../services/Api_Service';
 import { useEffect, useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
+import { FeatureList, isFeatureAllowed } from '../../../helpers/utils/App.FeatureAuth';
 
 
 interface DataType {
@@ -58,6 +59,8 @@ const Users = () => {
     dataIndex:'manager',
     key:'manager'
   },
+      ...(isFeatureAllowed(FeatureList.CRM_ADMIN)
+        ? [
   {
     title:'Action',
     dataIndex:"Action",
@@ -65,6 +68,8 @@ const Users = () => {
                 <Button onClick={() => handleDeleteUser(record)}><DeleteOutlined/></Button>
               ),
   },
+  ]
+      : []),
   // {
   //   title: 'Tags',
   //   key: 'tags',

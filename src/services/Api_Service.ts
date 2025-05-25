@@ -181,3 +181,39 @@ export const HandleExcellleadUpload = async(FormData:any) =>{
     console.error("Error in Uploading the sheet :- ", error); 
   }
 }
+
+export const GetReportOfExecutive = async(UserID:any) =>{
+  try {
+    const response = await axios.get(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.REPORTS}/${BACKEND_API_PATHS.EXECUTIVE}/${UserID}`,{
+      withCredentials:true,
+    })
+    return response?.data;
+  } catch (error) {
+    console.error("Error in Fetching Report of an executive :- ", error); 
+
+  }
+}
+
+export const GetReportOfTeamLead = async(UserID:string) =>{
+  try {
+    const response = await axios.get(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.REPORTS}/${BACKEND_API_PATHS.TEAM}/${UserID}`,{
+      withCredentials:true,
+    })
+    return response?.data;
+  } catch (error) {
+    console.error("Error in Fetching Report of Team Lead :- ", error); 
+
+  }
+}
+
+export const GetReportOfAdmin = async() =>{
+  try {
+    const response = await axios.get(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.REPORTS}/${BACKEND_API_PATHS.ADMINS}`,{
+      withCredentials:true,
+    })
+    return response?.data;
+  } catch (error) {
+    console.error("Error in Fetching Report of Admin :- ", error); 
+
+  }
+}

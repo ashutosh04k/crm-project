@@ -35,13 +35,13 @@ const featureBasedMenuItems = (): MenuItem[] => {
   }
 
   if (isFeatureAllowed(FeatureList.ADMIN_AUTH)) {
-    items.push({ key: '/reports', icon: <ContainerOutlined />, label: 'Report' });
+    items.push({ key: '/reports', icon: <ContainerOutlined />, label: 'Report',disabled:true  });
   }
 
   if (isFeatureAllowed(FeatureList.CRM_ADMIN)) {
     items.push({ key: '/createUser', icon: <UserAddOutlined />, label: 'Create User' });
   }
-  items.push(  { key: '/settings', icon: <SettingOutlined />, label: 'Settings' }
+  items.push(  { key: '/settings', icon: <SettingOutlined />, label: 'Settings',disabled:true }
 );
 
   return items;

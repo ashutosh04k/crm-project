@@ -17,7 +17,7 @@ const Dashboard = () => {
       {(CurrentRole === "SuperAdmin" || CurrentRole === "CRMAdministrator") &&(<SuperAdminDashboard/>) }
       {(CurrentRole === "Admin") &&(<AdminDashboard/>) }
       {(CurrentRole === "TeamLead") &&(<TeamLeadDashboard/>) }
-      {(CurrentRole === "User") &&(<UserDashboard/>) }
+      {(CurrentRole === "Executive") &&(<UserDashboard/>) }
 
     </div>
   )
