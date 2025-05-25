@@ -1,12 +1,13 @@
-import { Button, Card, Col, Divider, Input, message, Modal, Row ,Typography } from 'antd';
+import { Button, Card, Col, Divider, Input, message, Modal, Row, Table, Typography } from 'antd';
 import { AlertTriangle, PhoneCall } from 'lucide-react';
+import { useTeamLeads } from '../../hooks/useTeamLead';
 import { useEffect, useState } from 'react';
 import { CalendarOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { GetReportOfAdmin } from '../../../services/Api_Service';
+import { GetReportOfAdmin, GetReportOfTeamLead } from '../../../services/Api_Service';
 import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 const AdminDashboard = () => {
   const [open, setOpen] = useState(false);
@@ -14,10 +15,45 @@ const AdminDashboard = () => {
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [AdminData, setAdminData] = useState<any>(null);
+  const [TeamLeadData, setTeamLeadData] = useState<any>(null);
+  const [teamLeadIds, setTeamLeadIds] = useState<string[]>([]);
+  const Teamleads = useTeamLeads();
+  const [ExecutiveData, setExecutiveData] = useState<any>(null);
+
+  useEffect(() => {
+    if (Teamleads && Teamleads.length > 0) {
+      const ids = Teamleads.map((lead: any) => lead.value);
+      setTeamLeadIds(ids);
+    }
+  }, [Teamleads]);
+
+
+  useEffect(() => {
+    const fetchAllTeamLeadData = async () => {
+      try {
+        const response = await Promise.all(
+          teamLeadIds.map(id => GetReportOfTeamLead(id))
+        );
+        setTeamLeadData(response);
+        setExecutiveData(
+          response
+            .map((data: any) => data?.data?.executives || [])
+            .flat()
+        );
+      } catch (error) {
+        message.error("error in fetching Teamlead Data");
+      }
+    }
+    if (teamLeadIds.length > 0) fetchAllTeamLeadData();
+  }, [teamLeadIds])
+
+
   const showModal = () => {
     setOpen(true);
   };
 
+
+  console.log(ExecutiveData, "executivedata")
   const FetchAdminData = async () => {
     try {
       const response = await GetReportOfAdmin();
@@ -28,13 +64,10 @@ const AdminDashboard = () => {
   useEffect(() => {
     FetchAdminData();
   }, []);
-  console.log(AdminData, "admin")
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow only numbers
     if (/^\d*$/.test(value)) {
       setPhone(value);
-      // Validation: must be exactly 10 digits
       if (value.length === 10) {
         setPhoneError('');
       } else {
@@ -43,38 +76,134 @@ const AdminDashboard = () => {
     }
   };
 
-  const onChange = (key: string) => {
-    console.log(key);
-  };
-    const TeamLeadTab = () => (
-    <div>
-      <Title level={5}>Team Lead Overview</Title>
-      <p>This is the Team Lead tab content. Put your Team Lead related UI here.</p>
-    </div>
-  );
+  const TeamLeadTab = () => {
 
-  // Executive Tab Component
-  const ExecutiveTab = () => (
-    <div>
-      <Title level={5}>Executive Overview</Title>
-      <p>This is the Executive tab content. Put your Executive related UI here.</p>
-    </div>
-  );
+    const columns: Array<{
+      title: string;
+      dataIndex: string[];
+      key: string;
+      align: 'left' | 'right' | 'center';
+    }> = [
+      {
+        title: 'Name',
+        dataIndex: ['data', 'teamLeadName'],
+        key: 'teamLeadName',
+        align: 'left',
+      },
+      {
+        title: 'Total Leads Assigned',
+        dataIndex: ['data', 'totalLeadsAssigned'],
+        key: 'totalLeadsAssigned',
+        align: 'center',
+      },
+      {
+        title: 'New Leads',
+        dataIndex: ['data', 'totalNewLeads'],
+        key: 'totalNewLeads',
+        align: 'center',
+      },
+      {
+        title: 'In Progress Leads',
+        dataIndex: ['data', 'totalInProgressLeads'],
+        key: 'totalInProgressLeads',
+        align: 'center',
+      },
+      {
+        title: 'Converted Leads',
+        dataIndex: ['data', 'totalLeadsConverted'],
+        key: 'totalLeadsConverted',
+        align: 'center',
+      },
+      {
+        title: 'Unconverted Leads',
+        dataIndex: ['data', 'totalLeadsUnconverted'],
+        key: 'totalLeadsUnconverted',
+        align: 'center',
+      },
+      {
+        title: 'Closed Leads',
+        dataIndex: ['data', 'totalLeadsClosed'],
+        key: 'totalLeadsClosed',
+        align: 'center',
+      },
+    ];
+    return (
+      <div>
+        <Table dataSource={TeamLeadData} columns={columns} />
+      </div>
+    )
+  };
+  const ExecutiveTab = () => {
+
+     const columns: Array<{
+      title: string;
+      dataIndex: string[];
+      key: string;
+      align: 'left' | 'right' | 'center';
+    }> = [
+      {
+        title: 'Name',
+        dataIndex: [ 'executiveName'],
+        key: 'teamLeadName',
+        align: 'left',
+      },
+      {
+        title: 'Total Leads Assigned',
+        dataIndex: [ 'totalLeadsAssigned'],
+        key: 'totalLeadsAssigned',
+        align: 'center',
+      },
+      {
+        title: 'New Leads',
+        dataIndex: [ 'totalNewLeads'],
+        key: 'totalNewLeads',
+        align: 'center',
+      },
+      {
+        title: 'In Progress Leads',
+        dataIndex: [ 'totalInProgressLeads'],
+        key: 'totalInProgressLeads',
+        align: 'center',
+      },
+      {
+        title: 'Converted Leads',
+        dataIndex: [ 'totalLeadsConverted'],
+        key: 'totalLeadsConverted',
+        align: 'center',
+      },
+      {
+        title: 'Unconverted Leads',
+        dataIndex: [ 'totalLeadsUnconverted'],
+        key: 'totalLeadsUnconverted',
+        align: 'center',
+      },
+      {
+        title: 'Closed Leads',
+        dataIndex: [ 'totalLeadsClosed'],
+        key: 'totalLeadsClosed',
+        align: 'center',
+      },
+    ];
+    return (
+      <div>
+        <Table dataSource={ExecutiveData} columns={columns} />
+      </div>
+    )
+  };
 
   const items: TabsProps['items'] = [
     {
       key: '1',
       label: 'TeamLead',
-      children: <TeamLeadTab/>,
+      children: <TeamLeadTab />,
     },
     {
       key: '2',
       label: 'Executive',
-      children: <ExecutiveTab/>,
+      children: <ExecutiveTab />,
     },
   ];
   const handleOk = () => {
-    // Validate before submitting
     if (phone.length !== 10) {
       setPhoneError('Phone number must be exactly 10 digits');
       message.error('Please enter a valid 10-digit phone number');
@@ -168,9 +297,6 @@ const AdminDashboard = () => {
         </Row>
       </Row>
       <Divider />
-      {/* <Row justify="space-around" className=" flex flex-col">
-        <Col span={24} className="text-center text-lg"></Col>
-      </Row> */}
       <Row gutter={[16, 16]} >
         {AdminCardDetails.map((card, index) => (
           <Col span={6} key={index} className="flex justify-center items-center">
@@ -180,15 +306,15 @@ const AdminDashboard = () => {
           </Col>
         ))}
       </Row>
-      <Divider/>
+      <Divider />
       <Row gutter={[24, 24]} className="bg-white shadow-md rounded-lg p-4 mt-4">
         <Col span={24}>
-        <Title level={4} style={{float:'left'}}>OverView</Title>
-        <Divider/>
-          <Tabs defaultActiveKey="1" items={items}  className="w-full"  />
+          <Title level={4} style={{ float: 'left' }}>OverView</Title>
+          <Divider />
+          <Tabs defaultActiveKey="1" items={items} className="w-full" />
         </Col>
       </Row>
-      <Row gutter={[24, 24]} className="mt-6">
+      {/* <Row gutter={[24, 24]} className="mt-6">
         <Col span={12}>
           <Card title="Leads Overview" className="bg-white shadow-md rounded-lg p-4 mt-4">
 
@@ -254,7 +380,6 @@ const AdminDashboard = () => {
                         <PhoneCall size={24} />
                       </div>
                       <div className="text-2xl font-bold text-green-600">
-                        {/* {Math.round(stats.todayCalls * 0.7)} */}
                       </div>
                       <div className="text-sm text-green-700">Connected</div>
                     </div>
@@ -268,7 +393,6 @@ const AdminDashboard = () => {
                         <AlertTriangle size={24} />
                       </div>
                       <div className="text-2xl font-bold text-red-600">
-                        {/* {Math.round(stats.todayCalls * 0.2)} */}
                       </div>
                       <div className="text-sm text-red-700">Disconnected</div>
                     </div>
@@ -282,7 +406,6 @@ const AdminDashboard = () => {
                         <PhoneCall size={24} className="opacity-50" />
                       </div>
                       <div className="text-2xl font-bold text-gray-600">
-                        {/* {Math.round(stats.todayCalls * 0.1)} */}
                       </div>
                       <div className="text-sm text-gray-700">Switched Off</div>
                     </div>
@@ -299,7 +422,7 @@ const AdminDashboard = () => {
           </Card>
         </Col>
 
-      </Row>
+      </Row> */}
       <Modal
         title="Add New Lead"
         open={open}

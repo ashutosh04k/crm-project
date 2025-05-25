@@ -17,7 +17,6 @@ const headerStyle: React.CSSProperties = {
 const contentStyle: React.CSSProperties = {
   textAlign: 'center',
   minHeight: 500,
-  // marginTop:'10px',
   color: '#000',
   overflow:'auto',
   backgroundColor: '#ffffff',
@@ -27,14 +26,14 @@ const footerStyle: React.CSSProperties = {
   textAlign: 'center',
   color: '#000',
   backgroundColor: '#ffffff',
-  bottom:0
+  padding:'10px'
 };
 
 const layoutStyle = {
   borderRadius: 8,
   overflow: 'hidden',
   width: '100%',
-  height: '100vh', // full screen height
+  height: '100vh',
 };
 
 export const MainLayout: React.FC = () => {

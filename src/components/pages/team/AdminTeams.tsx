@@ -120,9 +120,9 @@ const AdminTeams = () => {
 
   return (
     <>
-      <Row gutter={[16, 24]} style={{ margin: '0 auto', minHeight: '100vh' }}>
+      <Row gutter={[16, 24]} style={{ margin: '0 auto', minHeight: '100vh',padding:'10px 0px' }}>
         <Col span={24}>
-          <Title level={3}>Team Leads</Title>
+          {/* <Title level={3}>Team Leads</Title> */}
           <Table<TeamLeadType> columns={teamLeadColumns} dataSource={teamLeads} />
         </Col>
       </Row>

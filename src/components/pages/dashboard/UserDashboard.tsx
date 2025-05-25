@@ -38,7 +38,7 @@ const UserDashboard = () => {
 
   return (
     <div>
-      <Row gutter={[16, 16]} style={{ margin: '0 auto', maxWidth: '100%', overflowX: 'hidden',minHeight:'100%',padding:"30px 0px",borderRadius:'12px',marginTop:'10px' }}>
+      <Row gutter={[16, 16]} style={{ margin: '0 auto', maxWidth: '100%', overflowX: 'hidden',minHeight:'100%',padding:"10px 0px",borderRadius:'12px',marginTop:'10px' }}>
         {cards.map((card, index) => (
           <Col span={6} key={index} className="flex justify-center items-center" >
             <Card title={card.title} hoverable size="small" variant="borderless" className="p-6" style={{ width: 250,background:"#FCF6F5"}}>
