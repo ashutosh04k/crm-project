@@ -1,62 +1,243 @@
-import { Button, Card, Col, Divider, Input, message, Modal, Row, Select } from 'antd';
+import { Button, Card, Col, Divider, Typography, message, Modal, Row, Select, Tabs, TabsProps, Table } from 'antd';
 import { AlertTriangle, Divide, PhoneCall } from 'lucide-react';
-import { useState } from 'react';
-import { CalendarOutlined ,DownloadOutlined,PlusOutlined, UploadOutlined } from '@ant-design/icons'; 
+import { useEffect, useState } from 'react';
+import { CalendarOutlined, DownloadOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import CommonForm from '../../../helpers/utils/CommonForm';
 import { CreateLeadControl } from '../../../config';
-import { CreateLead } from '../../../services/Api_Service';
+import { CreateLead, GetOverAllReport, GetReportOfAdmin, GetReportOfTeamLead } from '../../../services/Api_Service';
+import { useTeamLeads } from '../../hooks/useTeamLead';
+
+const { Title } = Typography;
 
 
 const intialCreateLeadFormData = {
-  clientName:" ",
-  clientEmail:" ",
-  clientPhone:" ",
-  projectInterested:" "
+  clientName: " ",
+  clientEmail: " ",
+  clientPhone: " ",
+  projectInterested: " "
 }
 const SuperAdminDashboard = () => {
   const [NewLeadopen, setNewLeadOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const Teamleads = useTeamLeads();
+
   const [NewLeadFormData, setNewLeadFormData] = useState<Record<string, string | boolean>>(intialCreateLeadFormData);
   const [NewLeadFromExcell, setNewLeadFromExcell] = useState(false);
+  const [SuperAdminData, setSuperAdminData] = useState<any>(null);
+  const [AdminData, setAdminData] = useState<any>(null);
+
+  const [TeamLeadData, setTeamLeadData] = useState<any>(null);
+  const [teamLeadIds, setTeamLeadIds] = useState<string[]>([]);
+  const [ExecutiveData, setExecutiveData] = useState<any>(null);
 
 
   const [excelFile, setExcelFile] = useState(null);
 
-  const handleFileChange = (e:any) => {
+  const handleFileChange = (e: any) => {
     setExcelFile(e.target.files[0]);
   };
   const showNewLeadModal = () => {
     setNewLeadOpen(true);
   };
 
-  
-  const handleNewLeadOk = async(NewLeadFormData:any) => {
+
+  const handleNewLeadOk = async (NewLeadFormData: any) => {
     // setConfirmLoading(true);
     setLoading(true);
     try {
       if (!/^\d{10}$/.test(NewLeadFormData.clientPhone as string)) {
-      message.error("Phone number must be exactly 10 digits and numeric.");
-      setLoading(false);
-      return;
-    }
-    const response = await CreateLead(NewLeadFormData);
-    message.success("Lead Added Successfully");
-    setNewLeadFormData(intialCreateLeadFormData);
+        message.error("Phone number must be exactly 10 digits and numeric.");
+        setLoading(false);
+        return;
+      }
+      const response = await CreateLead(NewLeadFormData);
+      message.success("Lead Added Successfully");
+      setNewLeadFormData(intialCreateLeadFormData);
     } catch (error) {
       message.error("Something went wrong. while creating new lead");
-    } finally{
+    } finally {
       setLoading(false);
     }
+    setNewLeadOpen(false)
     // setTimeout(() => {
     //   setNewLeadOpen(false);
     //   setConfirmLoading(false);
     // }, 2000);
   };
-  
+
+  const AdminTab = () => {
+    const columns: Array<{
+      title: string;
+      dataIndex: string[];
+      key: string;
+      align: 'left' | 'right' | 'center';
+    }> = [
+        {
+          title: 'TotalLeads Assigned',
+          dataIndex: ['totalLeads'],
+          key: 'totalLeads',
+          align: 'center',
+        },
+        {
+          title: 'New Leads',
+          dataIndex: ['totalNewLeads'],
+          key: 'New Leads',
+          align: 'center',
+        },
+        {
+          title: 'In Progress Leads',
+          dataIndex: ['totalInProgressLeads'],
+          key: 'In Progress Leads',
+          align: 'center',
+        },
+        {
+          title: 'Converted Leads',
+          dataIndex: ['totalLeadsConverted'],
+          key: 'Converted Leads',
+          align: 'center',
+        },
+        {
+          title: 'Unconverted Leads',
+          dataIndex: ['totalLeadsUnconverted'],
+          key: 'Unconverted Leads',
+          align: 'center',
+        },
+        {
+          title: 'Closed Leads',
+          dataIndex: ['totalLeadsClosed'],
+          key: 'totalCalls',
+          align: 'center',
+        }
+      ];
+    return (
+      <div>
+        <Table
+          dataSource={AdminData ? [AdminData] : []}
+          columns={columns}
+        />
+      </div>
+    )
+  };
+
+  const TeamLeadTab = () => {
+
+    const columns: Array<{
+      title: string;
+      dataIndex: string[];
+      key: string;
+      align: 'left' | 'right' | 'center';
+    }> = [
+        {
+          title: 'Name',
+          dataIndex: ['data', 'teamLeadName'],
+          key: 'teamLeadName',
+          align: 'left',
+        },
+        {
+          title: 'Total Leads Assigned',
+          dataIndex: ['data', 'totalLeadsAssigned'],
+          key: 'totalLeadsAssigned',
+          align: 'center',
+        },
+        {
+          title: 'New Leads',
+          dataIndex: ['data', 'totalNewLeads'],
+          key: 'totalNewLeads',
+          align: 'center',
+        },
+        {
+          title: 'In Progress Leads',
+          dataIndex: ['data', 'totalInProgressLeads'],
+          key: 'totalInProgressLeads',
+          align: 'center',
+        },
+        {
+          title: 'Converted Leads',
+          dataIndex: ['data', 'totalLeadsConverted'],
+          key: 'totalLeadsConverted',
+          align: 'center',
+        },
+        {
+          title: 'Unconverted Leads',
+          dataIndex: ['data', 'totalLeadsUnconverted'],
+          key: 'totalLeadsUnconverted',
+          align: 'center',
+        },
+        {
+          title: 'Closed Leads',
+          dataIndex: ['data', 'totalLeadsClosed'],
+          key: 'totalLeadsClosed',
+          align: 'center',
+        },
+      ];
+    return (
+      <div>
+        <Table dataSource={TeamLeadData} columns={columns} />
+      </div>
+    )
+  };
+  const ExecutiveTab = () => {
+
+    const columns: Array<{
+      title: string;
+      dataIndex: string[];
+      key: string;
+      align: 'left' | 'right' | 'center';
+    }> = [
+        {
+          title: 'Name',
+          dataIndex: ['executiveName'],
+          key: 'teamLeadName',
+          align: 'left',
+        },
+        {
+          title: 'Total Leads Assigned',
+          dataIndex: ['totalLeadsAssigned'],
+          key: 'totalLeadsAssigned',
+          align: 'center',
+        },
+        {
+          title: 'New Leads',
+          dataIndex: ['totalNewLeads'],
+          key: 'totalNewLeads',
+          align: 'center',
+        },
+        {
+          title: 'In Progress Leads',
+          dataIndex: ['totalInProgressLeads'],
+          key: 'totalInProgressLeads',
+          align: 'center',
+        },
+        {
+          title: 'Converted Leads',
+          dataIndex: ['totalLeadsConverted'],
+          key: 'totalLeadsConverted',
+          align: 'center',
+        },
+        {
+          title: 'Unconverted Leads',
+          dataIndex: ['totalLeadsUnconverted'],
+          key: 'totalLeadsUnconverted',
+          align: 'center',
+        },
+        {
+          title: 'Closed Leads',
+          dataIndex: ['totalLeadsClosed'],
+          key: 'totalLeadsClosed',
+          align: 'center',
+        },
+      ];
+    return (
+      <div>
+        <Table dataSource={ExecutiveData} columns={columns} />
+      </div>
+    )
+  };
+
   const handleNewLeadCancel = () => {
     setNewLeadOpen(false);
   };
-  const showExcellUploadModal = () =>{
+  const showExcellUploadModal = () => {
     setNewLeadFromExcell(true);
   }
   const handleExcellUploadOk = () => {
@@ -64,60 +245,118 @@ const SuperAdminDashboard = () => {
       setNewLeadFromExcell(false);
     }, 2000);
   };
-  
-  const handleExcellUploadCancel = () => {
-    setNewLeadFromExcell(false);
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: 'Admin',
+      children: <AdminTab />,
+    },
+    {
+      key: '2',
+      label: 'TeamLead',
+      children: <TeamLeadTab />,
+    },
+    {
+      key: '3',
+      label: 'Executive',
+      children: <ExecutiveTab />,
+    },
+  ];
+
+  useEffect(() => {
+    if (Teamleads && Teamleads.length > 0) {
+      const ids = Teamleads.map((lead: any) => lead.value);
+      setTeamLeadIds(ids);
+    }
+  }, [Teamleads]);
+
+
+  useEffect(() => {
+    const fetchAllTeamLeadData = async () => {
+      try {
+        const response = await Promise.all(
+          teamLeadIds.map(id => GetReportOfTeamLead(id))
+        );
+        setTeamLeadData(response);
+        setExecutiveData(
+          response
+            .map((data: any) => data?.data?.executives || [])
+            .flat()
+        );
+      } catch (error) {
+        message.error("error in fetching Teamlead Data");
+      }
+    }
+    if (teamLeadIds.length > 0) fetchAllTeamLeadData();
+  }, [teamLeadIds]);
+  const FetchAdminData = async () => {
+    try {
+      const response = await GetReportOfAdmin();
+      setAdminData(response?.data);
+    } catch (error) {
+      console.error("Error fetching admin data", error)
+    }
   };
-  const cardDetails = [
+
+  const FetchOverAllData = async () => {
+    try {
+      const response = await GetOverAllReport();
+      setSuperAdminData(response?.data)
+    } catch (error) {
+
+    }
+  }
+  useEffect(() => {
+    FetchAdminData();
+    FetchOverAllData();
+  }, []);
+
+  const SuperAdminCardDetails = [
     {
       title: 'Total Leads',
-      value: 100,
+      value: SuperAdminData?.totalLeads,
     },
     {
       title: 'New Leads',
-      value: 50,
+      value: SuperAdminData?.totalNewLeads,
     },
     {
       title: 'In Progress Leads',
-      value: 30,
+      value: SuperAdminData?.totalInProgressLeads,
     },
     {
       title: 'Converted Leads',
-      value: 15,
+      value: SuperAdminData?.totalLeadsConverted,
     },
     {
       title: 'Unconverted Leads',
-      value: 5,
+      value: SuperAdminData?.totalLeadsUnconverted,
     },
     {
-      title: 'Past Leads',
-      value: 20,
+      title: 'Closed Leads',
+      value: SuperAdminData?.totalLeadsClosed,
     },
     {
-      title: 'Total Users',
-      value: 200,
-    },
-    {
-      title: 'Active Users',
-      value: 150,
-    },
-    {
-      title: 'Inactive Users',
-      value: 50,
+      title: 'Total Admin',
+      value: SuperAdminData?.totalAdmins,
     },
     {
       title: 'Total Teams',
-      value: 10,
+      value: SuperAdminData?.totalTeamLeads,
     },
     {
-      title: 'Active Teams',
-      value: 8,
+      title: 'Total Executive',
+      value: SuperAdminData?.totalExecutives,
     },
     {
-      title: 'Inactive Teams',
-      value: 2,
+      title: 'Total Users',
+      value: SuperAdminData?.totalUsers,
     },
-  ]
+  ];
+  const handleExcellUploadCancel = () => {
+    setNewLeadFromExcell(false);
+  };
+
   return (
     <div className=' p-4 m-2 rounded-lg'>
 
@@ -134,12 +373,12 @@ const SuperAdminDashboard = () => {
 
         {/* Button */}
         <Row>
-        <Col>
-          <Button type="default" className="bg-red-500 border-red-500 hover:bg-red-600 mr-2">
-            Calender <CalendarOutlined />
-          </Button>
-        </Col>
-        <Col className='mr-2'>
+          <Col>
+            <Button type="default" className="bg-red-500 border-red-500 hover:bg-red-600 mr-2">
+              Calender <CalendarOutlined />
+            </Button>
+          </Col>
+          <Col className='mr-2'>
             <Select
               placeholder={`Add New`}
               onChange={(value) => {
@@ -147,10 +386,10 @@ const SuperAdminDashboard = () => {
                   case '1':
                     showNewLeadModal();
                     break;
-                  case '2' :
+                  case '2':
                     showExcellUploadModal();
                     break;
-                
+
                   default:
                     break;
                 }
@@ -163,19 +402,19 @@ const SuperAdminDashboard = () => {
                 { value: '2', label: 'Uplaod Excel Sheet' },
               ]}
             />
-        </Col>
+          </Col>
 
-        {" "}
-        <Col>
-          <Button type="primary" className="bg-red-500 border-red-500 hover:bg-red-600">
-            Download Report <DownloadOutlined />
-          </Button> 
-        </Col>
+          {" "}
+          <Col>
+            <Button type="primary" className="bg-red-500 border-red-500 hover:bg-red-600">
+              Download Report <DownloadOutlined />
+            </Button>
+          </Col>
         </Row>
       </Row>
-      <Divider/>
+      <Divider />
       <Row gutter={[16, 16]} >
-        {cardDetails.map((card, index) => (
+        {SuperAdminCardDetails.map((card, index) => (
           <Col span={6} key={index} className="flex justify-center items-center">
             <Card key={index} title={card.title} hoverable size='small' variant="borderless" className='p-6' style={{ width: 250 }}>
               <p className="text-center text-2xl font-bold">{card.value}</p>
@@ -183,7 +422,15 @@ const SuperAdminDashboard = () => {
           </Col>
         ))}
       </Row>
-      
+      <Divider />
+      <Row gutter={[24, 24]} className="bg-white shadow-md rounded-lg p-4 mt-4">
+        <Col span={24}>
+          <Title level={4} style={{ float: 'left' }}>OverView</Title>
+          <Divider />
+          <Tabs defaultActiveKey="1" items={items} className="w-full" />
+        </Col>
+      </Row>
+
       <Modal
         title="Add New Lead"
         open={NewLeadopen}
@@ -196,13 +443,13 @@ const SuperAdminDashboard = () => {
         closeIcon={null}
         className='justify-between'
       >
-        <CommonForm 
-        formControls={CreateLeadControl}
-        formData={NewLeadFormData}
-        setFormData={setNewLeadFormData}
-        onSubmit={handleNewLeadOk}
-        buttonText={loading ? "Adding New Lead..." : "Add New Lead"}
-        isBtnDisabled={loading}
+        <CommonForm
+          formControls={CreateLeadControl}
+          formData={NewLeadFormData}
+          setFormData={setNewLeadFormData}
+          onSubmit={handleNewLeadOk}
+          buttonText={loading ? "Adding New Lead..." : "Add New Lead"}
+          isBtnDisabled={loading}
         />
       </Modal>
       <Modal
@@ -227,7 +474,7 @@ const SuperAdminDashboard = () => {
 
       </Modal>
     </div>
-    
+
   )
 }
 

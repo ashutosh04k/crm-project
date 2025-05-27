@@ -14,5 +14,6 @@ export const BACKEND_API_PATHS = {
    UPLOADSHEET : 'uploadsheet',
    REPORTS : 'reports',
    EXECUTIVE : 'executive',
-   TEAM : 'team'
+   TEAM : 'team',
+   OVERALL : 'overall',
 };

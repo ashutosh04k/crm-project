@@ -217,3 +217,15 @@ export const GetReportOfAdmin = async() =>{
 
   }
 }
+
+export const GetOverAllReport = async() =>{
+  try {
+    const response = await axios.get(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.REPORTS}/${BACKEND_API_PATHS.OVERALL}`,{
+      withCredentials:true,
+    })
+    return response?.data;
+  } catch (error) {
+     console.error("Error in Fetching overall Report for SuperAdmin :- ", error); 
+
+  }
+}

@@ -16,9 +16,6 @@ interface DataType {
 
 }
 
-
-
-
 const Users = () => {
 
   const [users,setUsers] = useState([]);
@@ -57,7 +54,7 @@ const Users = () => {
   {
     title:'Manager Name',
     dataIndex:'manager',
-    key:'manager'
+    key:'manager',
   },
       ...(isFeatureAllowed(FeatureList.CRM_ADMIN)
         ? [
@@ -105,7 +102,8 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const response = await GetAllUser();
-        setUsers(response)
+        const filterddata = response.filter((item:any) => item.role !== "CRMAdministrator")
+        setUsers(filterddata)
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }
