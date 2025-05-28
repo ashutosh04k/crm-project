@@ -10,7 +10,7 @@ const header = () => {
     <div>
       <Row justify="space-between" align="middle" className="bg-#ffdddd p-2 rounded-lg">
       <Col>
-        <div className="text-lg font-semibold">{`Welcome to the ${CurrentRole}`}</div>
+        <div className="text-lg font-semibold">{`Welcome to the ${CurrentRole} Portal`}</div>
       </Col>
       <Col>
         <UserDetails />

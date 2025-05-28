@@ -21,13 +21,9 @@ interface DataType {
   leadStatus: string;
   assignedBy: string;
   assignedTo: string;
-  assignedByName?: string; // Add a new field for the user name
+  assignedByName?: string;
 }
 
-interface UpdateLead{
-  leadPriority:string,
-  remarks:string,
-}
 interface LeadTableProps {
   leads: DataType[];
   filter: string;
@@ -316,11 +312,14 @@ const LeadTable: React.FC<LeadTableProps> = memo(({ leads, filter, CurrentRole }
 
   return (
     <>
+    <div>
+
       <Table<DataType>
         // rowSelection={rowSelection}
         columns={columns}
         dataSource={leads}
-      />
+        />
+        </div>
       <Modal
         title={`Assign Lead`}
         open={isModalVisible}

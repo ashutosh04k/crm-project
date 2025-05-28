@@ -52,7 +52,7 @@ const TeamLeads: React.FC = () => {
           <Spin tip="Loading leads..." />
         ) : (
           <Tabs
-            className="bg-white h-screen"
+            className="bg-white h-auto p-4"
             style={{ padding: '16px', borderRadius: '10px' }}
             defaultActiveKey="1"
             items={items}

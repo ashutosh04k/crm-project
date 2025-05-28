@@ -15,24 +15,20 @@ const headerStyle: React.CSSProperties = {
 };
 
 const ContentStyle: React.CSSProperties ={
-  border:'1px solid green'
+  padding:"0px 0px"
 }
 
 const contentStyle: React.CSSProperties = {
   textAlign: 'center',
-  minHeight: 500,
+  height:'auto',
   color: '#000',
-  overflow:'auto',
   backgroundColor: 'rgb(247 247 247)',
 };
 
 const footerStyle: React.CSSProperties = {
   textAlign: 'center',
   color: '#000',
-  // backgroundColor: '#ffffff',
-  // padding:'10px',
-    border:'1px solid yellow',
-    padding:'0px 5px'
+  padding:'0px 5px'
 };
 
 const layoutStyle = {
@@ -40,7 +36,6 @@ const layoutStyle = {
   overflow: 'hidden',
   width: '100%',
   // // height: '100vh',
-  border:'1px solid red'
 };
 
 export const MainLayout: React.FC = () => {

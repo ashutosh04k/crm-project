@@ -59,8 +59,8 @@ const SuperAdminLeads: React.FC = () => {
           <Tabs
             activeKey={activeKey}
             onChange={handleTabChange}
-            className="bg-white h-screen p-4"
-            style={{ borderRadius: '10px', marginTop: '20px' }}
+            className="bg-white h-auto p-4"
+            style={{ borderRadius: '10px',padding:'10px' }}
             items={items}
             size="large"
           />
