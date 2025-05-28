@@ -8,9 +8,10 @@ export const useAdmins = () => {
     const fetchAdmins = async () => {
       try {
         const response = await FetchAllAdmin();
-        const options = response.map((lead: any) => ({
-          label: lead.name,
-          value: lead.id,
+        const options = response.map((data: any) => ({
+          label: data.name,
+          value: data.id,
+          role:data.role,
         }));
         setAdminOptions(options);
       } catch (error) {

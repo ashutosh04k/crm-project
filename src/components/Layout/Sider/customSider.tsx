@@ -16,7 +16,7 @@ import { FeatureList, isFeatureAllowed } from '../../../helpers/utils/App.Featur
 type MenuItem = Required<MenuProps>['items'][number];
 
 const baseMenuItems = [
-  { key: '/dashboard', icon: <PieChartOutlined />, label: 'Dashboard' },
+  { key: '/dashboard', icon: <PieChartOutlined />, label: 'Dashboard', },
   { key: '/leads', icon: <DesktopOutlined />, label: 'Leads' },
 ];
 
@@ -64,6 +64,7 @@ const CustomSider: React.FC<{ onSelectKey: (key: string) => void }> = ({ onSelec
         theme="light"
         items={items}
         onClick={handleMenuClick}
+        defaultSelectedKeys={[window.location.pathname]}
       />
     </div>
   );

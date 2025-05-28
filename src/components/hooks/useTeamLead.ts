@@ -8,9 +8,10 @@ export const useTeamLeads = () => {
     const fetchTeamLeads = async () => {
       try {
         const response = await FetchAllTeamLead();
-        const options = response.map((lead: any) => ({
-          label: lead.name,
-          value: lead.id,
+        const options = response.map((data: any) => ({
+          label: data.name,
+          value: data.id,
+          role : data.role,
         }));
         setTeamLeadOptions(options);
       } catch (error) {

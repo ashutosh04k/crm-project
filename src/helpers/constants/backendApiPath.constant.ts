@@ -16,4 +16,5 @@ export const BACKEND_API_PATHS = {
    EXECUTIVE : 'executive',
    TEAM : 'team',
    OVERALL : 'overall',
+   MANAGERASSIGN : 'managerassign',
 };

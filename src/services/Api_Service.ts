@@ -229,3 +229,18 @@ export const GetOverAllReport = async() =>{
 
   }
 }
+
+export const AssignManager = async(UserId:string,FormData:any) =>{
+   try {
+      const response = await axios.patch(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.USERS}/${UserId}/${BACKEND_API_PATHS.MANAGERASSIGN}`,
+        {
+          FormData
+        },
+        {
+        withCredentials:true,
+      })
+      return response;
+   } catch (error) {
+      console.error("Error in Assigning Manager",error);
+   }
+}

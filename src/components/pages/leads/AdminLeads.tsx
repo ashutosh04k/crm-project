@@ -37,12 +37,12 @@ const AdminLeads: React.FC = memo(() => {
   };
 
   const items: TabsProps['items'] = [
-    { key: '1', label: 'All Leads', children: <LeadTable leads={filterLeads('Allleads')} filter="Allleads" CurrentRole={role} /> },
-    { key: '2', label: 'New Leads', children: <LeadTable leads={filterLeads('New')} filter="New" CurrentRole={role} /> },
-    { key: '3', label: 'In Progress Leads', children: <LeadTable leads={filterLeads('InProgress')} filter="InProgress" CurrentRole={role} /> },
-    { key: '4', label: 'Converted Leads', children: <LeadTable leads={filterLeads('Converted')} filter="Converted" CurrentRole={role} /> },
-    { key: '5', label: 'UnConverted Leads', children: <LeadTable leads={filterLeads('Unconverted')} filter="Unconverted" CurrentRole={role} /> },
-    { key: '6', label: 'Past Leads', children: <LeadTable leads={filterLeads('Closed')} filter="Closed" CurrentRole={role} /> },
+    { key: '1', label: 'New Leads', children: <LeadTable leads={filterLeads('New')} filter="New" CurrentRole={role} /> },
+    { key: '2', label: 'In Progress Leads', children: <LeadTable leads={filterLeads('InProgress')} filter="InProgress" CurrentRole={role} /> },
+    { key: '3', label: 'Converted Leads', children: <LeadTable leads={filterLeads('Converted')} filter="Converted" CurrentRole={role} /> },
+    { key: '4', label: 'UnConverted Leads', children: <LeadTable leads={filterLeads('Unconverted')} filter="Unconverted" CurrentRole={role} /> },
+    { key: '5', label: 'Past Leads', children: <LeadTable leads={filterLeads('Closed')} filter="Closed" CurrentRole={role} /> },
+    { key: '6', label: 'All Leads', children: <LeadTable leads={filterLeads('Allleads')} filter="Allleads" CurrentRole={role} /> },
   ];
 
   return (

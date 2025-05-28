@@ -33,12 +33,11 @@ const CreateUser = () => {
       return;
     }
 
-    // Set managerId based on role
     let managerId = "";
     if (formData.role === "Executive") {
-      managerId = formData.teamLead; // This should be the selected teamLead's id
+      managerId = formData.teamLead; 
     } else if (formData.role === "TeamLead") {
-      managerId = formData.admin; // This should be the selected admin's id
+      managerId = formData.admin; 
     }
 
     const submitData = { ...formData, managerId };
@@ -80,7 +79,7 @@ const CreateUser = () => {
 
   return (
     <>
-      <Row gutter={[16, 16]} style={{ margin: '0 auto', maxWidth: '100%', overflowX: 'hidden' }}>
+      <Row gutter={[16, 16]} className="bg-white  p-4 justify-center" style={{ margin: '0 auto', overflowX: 'hidden'}}>
         <Col span={24} style={{ overflowX: 'auto' }}>
           <CommonForm
             formControls={getDynamicFormControls()}
