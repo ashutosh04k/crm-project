@@ -35,7 +35,6 @@ const layoutStyle = {
   borderRadius: 8,
   overflow: 'hidden',
   width: '100%',
-  // // height: '100vh',
 };
 
 export const MainLayout: React.FC = () => {
