@@ -179,21 +179,28 @@ export const DeleteUser = async(UserId:any) =>{
   }
 }
 
-export const HandleExcellleadUpload = async(FormData:any) =>{
+export const HandleExcellleadUpload = async (formData: FormData) => {
   try {
-    const response = await axios.post(`${API_BACKEND_PATH}/${BACKEND_API_PATHS.LEADS}/${BACKEND_API_PATHS.UPLOADSHEET}`,
-      FormData
-    ,{
-      headers:{
-        'Content-Type' : 'multipart/formdata',
+    const response = await axios.post(
+      `${API_BACKEND_PATH}/${BACKEND_API_PATHS.LEADS}/${BACKEND_API_PATHS.UPLOADSHEET}`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          // ✅ Optional: Let axios infer this. Avoid manually setting it unless needed.
+          'Content-Type': 'multipart/form-data',
+        },
       }
-    },);
-    alert('File uploaded successfully');
+    );
     return response;
   } catch (error) {
-    console.error("Error in Uploading the sheet :- ", error); 
+    console.error("Error uploading the sheet:", error);
+    throw error;
   }
-}
+};
+
+
+
 
 export const GetReportOfExecutive = async(UserID:any) =>{
   try {

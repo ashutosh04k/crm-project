@@ -26,7 +26,7 @@ const Leads = () => {
 
   const Component = roleToComponent[currentRole];
   return (
-    <div className="ml-2 rounded-lg">
+    <div className=" rounded-lg">
       {Component ? <Component /> : null}
     </div>
   );

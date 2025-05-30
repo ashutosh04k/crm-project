@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { CalendarOutlined, DownloadOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import CommonForm from '../../../helpers/utils/CommonForm';
 import { CreateLeadControl } from '../../../config';
-import { CreateLead, GetOverAllReport, GetReportOfAdmin, GetReportOfTeamLead } from '../../../services/Api_Service';
+import { CreateLead, GetOverAllReport, GetReportOfAdmin, GetReportOfTeamLead, HandleExcellleadUpload } from '../../../services/Api_Service';
 import { useTeamLeads } from '../../hooks/useTeamLead';
 
 const { Title } = Typography;
@@ -31,7 +31,7 @@ const SuperAdminDashboard = () => {
   const [ExecutiveData, setExecutiveData] = useState<any>(null);
 
 
-  const [excelFile, setExcelFile] = useState(null);
+  const [excelFile, setExcelFile] = useState<File | null>(null);
 
   const handleFileChange = (e: any) => {
     setExcelFile(e.target.files[0]);
@@ -40,6 +40,7 @@ const SuperAdminDashboard = () => {
     setNewLeadOpen(true);
   };
 
+  console.log(excelFile,"file")
 
   const handleNewLeadOk = async (NewLeadFormData: any) => {
     // setConfirmLoading(true);
@@ -240,11 +241,28 @@ const SuperAdminDashboard = () => {
   const showExcellUploadModal = () => {
     setNewLeadFromExcell(true);
   }
-  const handleExcellUploadOk = () => {
-    setTimeout(() => {
-      setNewLeadFromExcell(false);
-    }, 2000);
-  };
+const handleExcellUploadOk = async () => {
+  if (!excelFile) {
+    message.error("Please select a file first.");
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("sheet", excelFile); 
+    console.log(formData)
+    const response = await HandleExcellleadUpload(formData); 
+    message.success("File uploaded successfully!");
+    setNewLeadFromExcell(false);
+    setExcelFile(null);
+  } catch (error) {
+    message.error("Error uploading file");
+  }
+};
+
+
+
+
   const items: TabsProps['items'] = [
     {
       key: '1',
@@ -353,6 +371,7 @@ const SuperAdminDashboard = () => {
       value: SuperAdminData?.totalUsers,
     },
   ];
+
   const handleExcellUploadCancel = () => {
     setNewLeadFromExcell(false);
   };
@@ -361,17 +380,11 @@ const SuperAdminDashboard = () => {
     <div className=' p-4 m-2 rounded-lg'>
 
       <Row justify="space-between" align="middle" className=" bg-white backdrop-white flex items-center p-4 rounded-2xl">
-        {/* Title */}
+
         <Col>
           <div className="text-2xl font-bold"> Dashboard</div>
         </Col>
 
-        {/* Subtitle */}
-        {/* <Col>
-          <div className="text-lg">Welcome to the Super Admin Dashboard</div>
-        </Col> */}
-
-        {/* Button */}
         <Row>
           <Col>
             <Button type="default" className="bg-red-500 border-red-500 hover:bg-red-600 mr-2">
@@ -455,15 +468,22 @@ const SuperAdminDashboard = () => {
       <Modal
         title="Upload Lead Using Excell"
         open={NewLeadFromExcell}
-        okText="Create User"
         onOk={handleExcellUploadOk}
         width={416}
         onCancel={handleExcellUploadCancel}
         className='justify-between'
+        okText="Upload Sheet"
       >
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '10px' }}>
+          {
+            excelFile ?
+            <span>{excelFile.name}</span>
+            :
+            <>
           <UploadOutlined style={{ fontSize: '16px' }} />
           <span>Choose Excel File</span>
+            </>
+          }
           <input
             type="file"
             accept=".xls,.xlsx"
